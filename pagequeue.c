@@ -16,9 +16,14 @@
  * @brief Create and initialize a page queue with a given capacity
  */
 PageQueue *pqInit(unsigned int maxSize) {
-    // TODO: malloc a PageQueue, set head and tail to NULL,
-    //       size to 0, maxSize to maxSize, and return the pointer
-    return NULL;
+    PageQueue *pq = (PageQueue *)malloc(sizeof(PageQueue));
+    if (pq) {
+        pq->head = NULL;
+        pq->tail = NULL;
+        pq->size = 0;
+        pq->maxSize = maxSize;
+    }
+    return pq;
 }
 
 /**
@@ -44,8 +49,14 @@ long pqAccess(PageQueue *pq, unsigned long pageNum) {
  * @brief Free all nodes in the queue and reset it to empty
  */
 void pqFree(PageQueue *pq) {
-    // TODO: Walk from head to tail, free each node, then free
-    //       the PageQueue struct itself.
+    PqNode *current = pq->head;
+    PqNode *next;
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+    free(pq);
 }
 
 /**
