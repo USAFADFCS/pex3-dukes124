@@ -30,18 +30,59 @@ PageQueue *pqInit(unsigned int maxSize) {
  * @brief Access a page in the queue (simulates a memory reference)
  */
 long pqAccess(PageQueue *pq, unsigned long pageNum) {
-    // TODO: Search the queue for pageNum (suggest searching tail->head
-    //       so you naturally count depth from the MRU end).
-    //
-    // HIT path (page found at depth d):
-    //   - Remove the node from its current position and re-insert
-    //     it at the tail (most recently used).
-    //   - Return d.
-    //
-    // MISS path (page not found):
-    //   - Allocate a new node for pageNum and insert it at the tail.
-    //   - If size now exceeds maxSize, evict the head node (free it).
-    //   - Return -1.
+    PqNode *current = pq->tail; // start at end
+    long depth = 0;
+    while (current != NULL && current->pageNum != pageNum) { // scan towards head
+        current = current->prev;
+        depth++;
+    }
+    //HIT
+    if (current != NULL) { // page found
+        if (depth == 0) {
+            return 0;  // mru already, dont move
+        }
+
+        if (current->prev != NULL) { // not head, update prev next
+            current->prev->next = current->next;
+        } else {
+            pq->head = current->next;  // current is head
+        }
+        current->next->prev = current->prev;  // current not tail
+
+        current->prev = pq->tail; // current becomes tail 
+        current->next = NULL; 
+        pq->tail->next = current;
+        pq->tail = current;
+
+        return depth;
+    }
+
+    // MISS
+    // page not in queue, allocate node and append at tail
+    PqNode *newNode = (PqNode *)malloc(sizeof(PqNode));
+    newNode->pageNum = pageNum;
+    newNode->next = NULL;
+    newNode->prev = pq->tail;
+    if (pq->tail != NULL) { // queue not empty, link tail to new node
+        pq->tail->next = newNode;
+    } else {
+        pq->head = newNode;  // queue was empty
+    }
+    pq->tail = newNode;
+    pq->size++;
+
+    if (pq->size > pq->maxSize) { // evict LRU page at head
+        PqNode *victim = pq->head;
+        pq->head = victim->next;
+        if (pq->head != NULL) { 
+            pq->head->prev = NULL;
+        } else {
+            pq->tail = NULL;  // empty queue after evic
+        }
+        free(victim);
+        pq->size--;
+    }
+
     return -1;
 }
 
