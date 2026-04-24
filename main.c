@@ -118,12 +118,14 @@ int main(int argc, char **argv) {
     printf("Total Accesses:,%lu\n", numAccesses);
     printf("Frames,Missees,Miss Rate\n");
 
-    // TODO: Loop from frame count 1 to maxFrames and print each row:
-    //       printf("%d,%lu,%f\n", frameCount, faults[frameCount],
-    //              (double)faults[frameCount] / (double)numAccesses);
+    for (int f = 1; f <= maxFrames; f++) {
+        printf("%d,%lu,%f\n", f, faults[f],
+               (double)faults[f] / (double)numAccesses);
+    }
 
-    // TODO: Free your PageQueue and the faults[] array,
-    //       then close the file.
+    pqFree(pq);
+    free(faults);
+    fclose(ifp);
 
     return 0;
 }
