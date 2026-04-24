@@ -1,12 +1,13 @@
 /** main.c
  * ===========================================================
- * Name: _______________________, __ ___ 2026
- * Section: CS483 / ____
+ * Name: Samuel Lavoie, 23 April 2026
+ * Section: CS483 / M4
  * Project: PEX3 - Page Replacement Simulator
  * Purpose: Reads a BYU binary memory trace file and simulates
  *          LRU page replacement to measure fault rates across
  *          varying frame allocations.
- * Documentation: TBD
+ * Documentation: Used https://www.geeksforgeeks.org/dsa/program-for-least-recently-used-lru-page-replacement-algorithm/
+ * to help with algorithim implementation. Used CS220 DLL code as a reference for the doubly linked list implementation.
  * =========================================================== */
 #include <stdio.h>
 #include <stdlib.h>
