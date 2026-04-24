@@ -96,13 +96,19 @@ int main(int argc, char **argv) {
             fprintf(stderr, "%lu samples read, last page: %lu\r", numAccesses, pageNum);
         }
 
-        // TODO: Call pqAccess() to simulate this memory reference.
-        //       It returns:
-        //         -1      -> page was NOT in the queue (fault for ALL frame counts)
-        //         d >= 0  -> page was at depth d from the MRU end
-        //                    (fault for any allocation with fewer than d+1 frames)
-        //
-        //       Update faults[] accordingly.
+        long depth = pqAccess(pq, pageNum);
+
+        if (depth == -1) {
+            // Miss, page was NOT in the queue (fault for ALL frame counts)
+            for (int f = 1; f <= maxFrames; f++) {
+                faults[f]++;
+            }
+        } else {
+            // Hit, page was at depth d from the MRU end
+            for (int f = 1; f <= depth; f++) {
+                faults[f]++;
+            }
+        }
 
     }
 
